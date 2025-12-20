@@ -105,6 +105,32 @@
       (if (> (:rating movie) min-rating) (+ acc 1) acc))
     0 movies))
 
+(defn average-rating-for-genre [movies genre]
+  (let [movies-in-genre
+        (filter-by-genre movies genre)]
+    (if (empty? movies-in-genre)
+      0
+      (/ (reduce
+           (fn [sum m] (+ sum (:rating m)))
+           0
+           movies-in-genre)
+         (count movies-in-genre)))))
+
+(defn average-rating-by-genre [movies]
+  (reduce
+    (fn [acc m]
+      (reduce
+        (fn [a g]
+          (let [current (get a g {:sum 0 :count 0})]
+            (assoc a g
+                     {:sum   (+ (:sum current) (:rating m))
+                      :count (inc (:count current))})))
+        acc
+        (:genres m)))
+    {}
+    movies))
+
+
 (defn -main
   []
   (println "Movies titles:" (get-titles movies))
@@ -113,6 +139,7 @@
   (println "Average movies rating:" (average-rating movies))
   (println "Best rated movie:" (:title (best-rated-movie movies)))
   (println "Number of movies with rating higher then 8.8:" (count-high-rated movies 8.8))
+  (println "Average rating of Drama movies:" (average-rating-for-genre movies "Drama"))
   )
 
 
