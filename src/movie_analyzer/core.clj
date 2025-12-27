@@ -84,13 +84,22 @@
     (fn [m] (some (fn [g] (= g genre)) (:genres m)))
     movies))
 
+(defn titles-by-genre [movies genre]
+  (map :title (filter-by-genre movies genre)))
+
+
 (defn sum-ratings [movies]
-  (reduce (fn [total movie] (+ total (:rating movie))) 0 movies))
+  (reduce + (map :rating movies)))
+
+(defn average-by [movies value-fn]
+  (let [values (filter some? (map value-fn movies))]
+    (if (empty? values)
+      0
+      (/ (reduce + values) (count values)))))
 
 (defn average-rating [movies]
-  (if (empty? movies)
-    0
-    (/ (sum-ratings movies) (count movies))))
+  (average-by movies :rating))
+
 
 (defn best-rated-movie [movies]
   (reduce
@@ -106,15 +115,9 @@
     0 movies))
 
 (defn average-rating-for-genre [movies genre]
-  (let [movies-in-genre
-        (filter-by-genre movies genre)]
-    (if (empty? movies-in-genre)
-      0
-      (/ (reduce
-           (fn [sum m] (+ sum (:rating m)))
-           0
-           movies-in-genre)
-         (count movies-in-genre)))))
+  (average-by
+    (filter-by-genre movies genre)
+    :rating))
 
 (defn average-rating-by-genre [movies]
   (reduce
@@ -130,6 +133,20 @@
     {}
     movies))
 
+(defn finalize-averages [stats]
+  (map
+    (fn [[genre data]]
+      [genre (/ (:sum data) (:count data))])
+    stats))
+
+(defn average-rating-after-year [movies year]
+  (average-by
+    (filter
+      (fn [m]
+        (and (:year m)
+             (> (:year m) year)))
+      movies)
+    :rating))
 
 (defn -main
   []
@@ -140,6 +157,8 @@
   (println "Best rated movie:" (:title (best-rated-movie movies)))
   (println "Number of movies with rating higher then 8.8:" (count-high-rated movies 8.8))
   (println "Average rating of Drama movies:" (average-rating-for-genre movies "Drama"))
+  (println "Average ratings by genre:" (finalize-averages (average-rating-by-genre movies)))
+  (println "Average ratings after year 2000:" (average-rating-after-year movies 2000))
   )
 
 
