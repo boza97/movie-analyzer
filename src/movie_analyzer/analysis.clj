@@ -1,7 +1,5 @@
 (ns movie-analyzer.analysis)
 
-(defn get-titles [movies] (map :title movies))
-
 (defn filter-by-genre [movies genre]
   (filter
     (fn [m] (some (fn [g] (= g genre)) (:genres m)))
@@ -9,9 +7,6 @@
 
 (defn titles-by-genre [movies genre]
   (map :title (filter-by-genre movies genre)))
-
-(defn sum-ratings [movies]
-  (reduce + (map :rating movies)))
 
 (defn average-by [movies value-fn]
   (let [values (filter some? (map value-fn movies))]
@@ -68,3 +63,26 @@
              (> (:year m) year)))
       movies)
     :rating))
+
+(defn movies-by-director [movies]
+  (group-by :director movies))
+
+(defn movies-by-genre [movies]
+  (reduce
+    (fn [acc m]
+      (reduce
+        (fn [a g]
+          (assoc a g (conj (get a g []) m)))
+        acc
+        (:genres m)))
+    {}
+    movies))
+
+(defn average-rating-by-director [movies]
+  (map
+    (fn [[director ms]]
+      [director (average-rating ms)])
+    (movies-by-director movies)))
+
+
+

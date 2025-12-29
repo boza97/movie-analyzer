@@ -7,7 +7,6 @@
 
 (defn -main
   []
-  (println "Movies titles:" (analysis/get-titles movies))
   (println "Total number of movies:" (count movies))
   (println "Sci-Fi movies:" (analysis/titles-by-genre movies "Sci-Fi"))
   (println "Average movies rating:" (analysis/average-rating movies))
