@@ -1,6 +1,7 @@
 (ns movie-analyzer.core
   (:require
     [movie-analyzer.analysis :as analysis]
+    [movie-analyzer.ml :as ml]
     [movie-analyzer.parser :as parser]))
 
 (def movies (parser/load-movies))
@@ -15,6 +16,15 @@
   (println "Average rating of Drama movies:" (analysis/average-rating-for-genre movies "Drama"))
   (println "Average ratings by genre:" (analysis/finalize-averages (analysis/average-rating-by-genre movies)))
   (println "Average ratings after year 2000:" (analysis/average-rating-after-year movies 2000))
+  (let [prepared (map ml/normalize-movie
+                      (ml/prepare-dataset movies))
+        {:keys [train test]} (ml/split-dataset prepared)
+        model (ml/train-model train 200 0.01)
+        error (ml/mean-absolute-error model test)]
+    (println "**** ML demo ****")
+    (println "  Train size:" (count train))
+    (println "  Test size:" (count test))
+    (println "  Mean Absolute Error:" error))
   )
 
 
