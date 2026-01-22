@@ -79,6 +79,16 @@ lein run
 - **IntelliJ IDEA** with Cursive plugin
 - **clojure.test** for unit testing
 
+---
+
+## Documentation
+
+The project documentation is available in the repository:
+
+- [`doc/seminarski_imdb_filmovi_clojure.pdf`](doc/seminarski_imdb_filmovi_clojure.pdf)
+
+---
+
 ## License
 
 Copyright © 2026 Božidar Mastilović
@@ -93,3 +103,4 @@ Public License, v. 2.0 are satisfied: GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or (at your
 option) any later version, with the GNU Classpath Exception which is available
 at https://www.gnu.org/software/classpath/license.html.
+
